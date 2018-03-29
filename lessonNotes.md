@@ -196,3 +196,58 @@ rails c (this opens the rails console)
 
 Song.first.artist  (this will test the song relationship song to artist)
 
+{You'll have to restart your rails console by "quit" and then rails c again for this to work}
+
+16) ROutes:
+
+Currently we have an empty set of Routes, only a link to the Documentaion. Weneed to set up api imports. With rails there is an easy way to set up the routes we need with:
+
+Rails.application.routes.draw do
+
+  resources :artists
+end
+
+We have basic crud within routes now:
+
+The resources is going to build out all the routes for me. W could seperate the commands and have a sep set for sons. But with the way we are setting up the app, the song isdependent on the artist, so we need the path to includd info anout the songs as well. To do that we make a do, resources :songs
+
+17 )
+
+Here is the reformatted routes now:
+
+
+Rails.application.routes.draw do
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  resources :artists do
+    resources :songs
+end
+end
+
+
+this creates around 15 routes for us. 
+
+
+18) run :
+
+rails routes
+ 
+ what we will see is the routes we set up with 'resources' :
+
+  2018-03-29 11:58:56 ⌚  |2.4.2| Kalpanas-MacBook-Air in ~/Desktop/React_on_Rails_PRACTICE_DIR/tunr_react_rails
+± |master U:2 ?:10 ✗| → rails routes
+      Prefix Verb   URI Pattern                             Controller#Action
+artist_songs GET    /artists/:artist_id/songs(.:format)     songs#index
+             POST   /artists/:artist_id/songs(.:format)     songs#create
+ artist_song GET    /artists/:artist_id/songs/:id(.:format) songs#show
+             PATCH  /artists/:artist_id/songs/:id(.:format) songs#update
+             PUT    /artists/:artist_id/songs/:id(.:format) songs#update
+             DELETE /artists/:artist_id/songs/:id(.:format) songs#destroy
+     artists GET    /artists(.:format)                      artists#index
+             POST   /artists(.:format)                      artists#create
+      artist GET    /artists/:id(.:format)                  artists#show
+             PATCH  /artists/:id(.:format)                  artists#update
+             PUT    /artists/:id(.:format)                  artists#update
+             DELETE /artists/:id(.:format)                  artists#destroy
+
+
+Now, we can see the power of rails routing, and resources / do. 
