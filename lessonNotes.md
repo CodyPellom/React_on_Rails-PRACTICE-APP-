@@ -32,11 +32,30 @@ create a package.json within the root directory of the rails application and put
 
   The package will run the React app, and copy the minified build folder into the puclic folder in order to produce a fast and efficeient development. 
 
-Under client>package.json, we add this:
+4) Under client>package.json, we add this:
 
 
   "proxy": "http://localhost:3001",
 
-  underneath the "private" dependencie.
+  underneath the "private" dependency. 
 
-  
+  5) We need to set up a development script in order to run both of our serverss at the same time. We want two servers to run at the same time, similar to express and react's "concurrently"
+
+  6) install "foreman" 
+
+  gem install foreman
+
+  7) Procfile.dev... in the root folder, create this file with the same file name (capital 'P') and within it, paste:
+
+  web: sh -c 'cd client && PORT=3000 npm start'
+api: rails s -p 3001
+
+This is going to start our react app. the -p 3001 sets the port we want to use for react. 3000 is going to be rails and 3001 is going to be our react app!
+
+8) this is basically it, to link React and Rails. To start our development:
+
+foreman start -f Procfile.dev
+
+Make sure to be inside the root folder, or this will not work. Foreman must be installed along with the script instrutions completed from above.
+
+
