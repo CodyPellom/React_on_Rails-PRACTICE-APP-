@@ -251,3 +251,361 @@ artist_songs GET    /artists/:artist_id/songs(.:format)     songs#index
 
 
 Now, we can see the power of rails routing, and resources / do. 
+
+
+19) to avoid crossing wires between client side routes, and erver side routes. In order to avoid confusing routes and overlapping routes, we are going to yet again, reformat our routes with  namespace :api do    :
+
+
+Rails.application.routes.draw do
+  # For details on the DSL available within this file, see http://guides.rubyonrails.org/routing.html
+  namespace :api do
+  resources :artists do
+    resources :songs
+end
+end
+end
+
+Now that we have all of the routes set up : 2018-03-29 12:03:53 ⌚  |2.4.2| Kalpanas-MacBook-Air in ~/Desktop/React_on_Rails_PRACTICE_DIR/tunr_react_rails
+± |master U:2 ?:10 ✗| → rails routes
+          Prefix Verb   URI Pattern                                 Controller#Action
+api_artist_songs GET    /api/artists/:artist_id/songs(.:format)     api/songs#index
+                 POST   /api/artists/:artist_id/songs(.:format)     api/songs#create
+ api_artist_song GET    /api/artists/:artist_id/songs/:id(.:format) api/songs#show
+                 PATCH  /api/artists/:artist_id/songs/:id(.:format) api/songs#update
+                 PUT    /api/artists/:artist_id/songs/:id(.:format) api/songs#update
+                 DELETE /api/artists/:artist_id/songs/:id(.:format) api/songs#destroy
+     api_artists GET    /api/artists(.:format)                      api/artists#index
+                 POST   /api/artists(.:format)                      api/artists#create
+      api_artist GET    /api/artists/:id(.:format)                  api/artists#show
+                 PATCH  /api/artists/:id(.:format)                  api/artists#update
+                 PUT    /api/artists/:id(.:format)                  api/artists#update
+                 DELETE /api/artists/:id(.:format)                  api/artists#destroy
+
+We need to now set up the controller actions for our routes
+
+
+20)
+
+Api Songs
+
+Api Artists
+
+both need to be generated now. since they are expected within routes!!!
+
+
+generate them with :
+
+rails g controller api::artists (This creates not only the controller, but a folder. and using the convention over config since we have everything wrapped api, the controller we are looking for will all be wihin an API directory. This will create the api directory and put the controller within it)
+
+
+
+21)
+
+next go to the artiss_controller:
+
+class Api::ArtistsController < ApplicationController
+    def index
+    end
+
+
+    def show
+    end
+
+
+    def create
+    end
+
+
+    def update
+    end
+
+
+    def destroy
+    end
+
+
+    
+end
+
+
+then within artist:
+
+    def index
+        @artists = Artist.all 
+        render json: {
+            artists: @artists
+        }
+    end
+
+    This connection to the DB between Artist and the artist controller: The controller is just the brains of the operaton thats wht gives the instructions of what data comes from the database and what output needs to go to the user, get some data, render out some JSON dta using 'artist'.
+
+22)  To set up all of our routes for our artists.. lets use POSTMAN!!
+
+OPEN ITUP BOOI:
+
+withing GET on the params 'route search bar' :
+
+localhost:3001/api/artists
+
+then press 'send'
+
+The results from this :
+
+{
+    "artists": [
+        {
+            "id": 1,
+            "name": "Yeah Yeah Yeahs",
+            "photo_url": "http://www.athousandguitars.com/wp-content/uploads/2013/04/yeah-yeah-yeahs.jpg",
+            "nationality": "USA",
+            "created_at": "2018-03-29T15:43:28.261Z",
+            "updated_at": "2018-03-29T15:43:28.261Z"
+        },
+        {
+            "id": 2,
+            "name": "Nosaj Thing",
+            "photo_url": "http://wertn.com/wp-content/uploads/2012/04/Nosaj-Thing_Mondrian_CL_High-3487.jpg",
+            "nationality": "USA",
+            "created_at": "2018-03-29T15:43:28.469Z",
+            "updated_at": "2018-03-29T15:43:28.469Z"
+        },
+        {
+            "id": 3,
+            "name": "Norah Jones",
+            "photo_url": "http://entertainmentrealm.files.wordpress.com/2012/05/norahjones1.jpg",
+            "nationality": "USA",
+            "created_at": "2018-03-29T15:43:28.614Z",
+            "updated_at": "2018-03-29T15:43:28.614Z"
+        }, etc etc etc etc etc etc etc etc etc etc etc etc etc etc etc etc etc etc etc
+
+
+    Post man is testing the JSON data that we are sending and recieving is what we expect whenever we get to the react side stuff
+
+23)  As we think about usr stories and completing a feature, maybe just set up an index within a controller, in order to focus on solving the probem hat is within the US. Dont fret about building CRUD before having anything onthe page at all. What is the MVP in order for a user to get value?
+
+If there is nothing for the iuser to work on, you havent really built anything at all.
+
+For the prctice, however we are going to build the CRUD routes, but keep this pointinmind.
+
+24)
+
+In rails you dont ned to worry about the differences between params, jst use the basic:
+
+25) Within Artist controller lets do our show control: 
+
+
+
+
+    def show
+        @artist = Artist.find(params[:id])
+        render json: {
+            artist: @artist
+        }
+    end
+
+
+
+
+    and Destroy:
+
+
+
+
+    def destroy
+        Artist.find(params[:id]).destroy
+
+        
+        render json: {
+            message: "Artist successfully destroyed"
+        }
+    end
+
+Within destroy, we add a message to verify that an artist has been dleted
+
+We can test destroy in postman
+
+localhost:3001/api/artists/8
+
+and of course, select 'destroy'
+
+26) The last thing to do is to create a Create method within controller, the rails way.
+
+within artists_controller.rb, add a 'private' section underneath 'Destroy':
+
+    
+private
+
+def artist_params
+    params.require(:artist).permit(:name, :photo_url, :nationality)
+end
+
+
+
+
+& also
+
+
+
+
+
+ def create
+        @artist = Artist.create(artist_params)
+        render json: {
+            artist: @artist
+        }
+    end
+
+    finish making the 'Create' mehthod
+
+
+
+    27)
+    localhost:3001/api/artists/ 
+    test postman using the "POST" selection. 
+    put this by selecting body, then raw and, and under textmake sure to use JSON (application JSON) or it will not work, and you will recieve an error!!
+    
+    paste this, or create a new fake or real band entry:
+
+    {
+"name": "Mock Execution",
+"photo_url": "https://s.hswstatic.com/gif/five-forms-of-torture-a-6.jpg",
+"nationality": "U.S.A."
+}
+
+28)
+Create the update method in artists_controller:
+
+
+    def update
+        @artist = Artist.find(params[:id])
+        @artist.update!(artist_params)
+
+        render json: {
+            artist: @artist
+        }
+    end
+
+    29)
+
+    Now we have full crud on the artist controller now. Next we will be constructing the songs controller
+
+    in your terminal :
+
+    rails g controller api::songs
+
+    30) go to your songs controller (app>controllers>api>songs_controller) and input these controller methods:
+
+
+
+    class Api::SongsController < ApplicationController
+  def index
+    @artist = Artist.find(params[:artist_id])
+    @songs = @artist.songs
+    render json: {
+      songs: @songs
+    }
+  end
+
+  def show
+    @song = Song.find(params[:id])
+    render json: {
+      song: @song
+    }
+  end
+
+  def create
+    @artist = Artist.find(params[:artist_id])
+    @song = @artist.songs.create(song_params)
+    render json: {
+      song: @song
+    }
+  end
+
+  def update
+    @artist = Artist.find(params[:artist_id])
+    @song = @artist.songs.find(params[:id])
+    @song.update!(song_params)
+    render json: {
+      song: @song
+    }
+  end
+
+  def destroy
+    Song.find(params[:id]).destroy
+
+    render json: {
+      message: "Song successfully destroyed"
+    }
+  end
+
+  private
+
+  def song_params
+    params.require(:song).permit(:title, :album, :preview_url )
+  end
+
+end
+
+
+
+
+
+31) we now hav a decent back end application. This is now full restful routes within two models. what is left to do, set up heroku and a front end within reeact
+
+32) first, we are going to run:
+
+ heroku create tunrreactrails
+
+
+The response should be...
+ 2018-03-29 14:02:42 ⌚  |2.4.2| Kalpanas-MacBook-Air in ~/Desktop/React_on_Rails_PRACTICE_DIR/tunr_react_rails
+± |master U:2 ?:12 ✗| → heroku create tunrreactrails
+Creating ⬢ tunrreactrails... done
+https://tunrreactrails.herokuapp.com/ | https://git.heroku.com/tunrreactrails.git
+
+
+if not...I dont know what to tell you. I absolutely SUCK at debugging heroku right now. THat's def something I want to get better at. 
+
+
+33)  Next, to get heroku to work properly, we need to addourbuild packs. Make sure you are inside the root folder of your application and not outside of it or this will not work you will get an error that says required flags. in the terminal:
+
+heroku buildpacks:add --index 1 heroku/ruby
+
+
+heroku buildpacks:add --index 2 heroku/nodejs
+
+34) Create a PRoc file, in the root called:
+
+Procfile     (no . on the end. JUST "Procfile")
+
+within the procfile you just created, insert this:
+
+web: rails s
+
+
+* this procfile tells heroku how to install the application
+* A procfile tells your dyno what commands heroku neds to run to get your app started
+
+35) in the terminal, run :
+
+heroku addons:create heroku-postgresql:hobby-dev
+
+* this is an addon which will help heroku be able to make a connection with your postgresql DB
+
+36)Push your Heroku app using :
+
+git push heroku master
+
+
+37) then .. Migrate and seed your DB using:
+
+
+ heroku run rails db:migrate db:seed
+
+ 38) next when you inevitably get an error with Heroku (since its the most buggy deployment tool ever) you can look at your errors and get someone who is a better web developer than you are to fix it for you by, in the terminal, typing: 
+
+ heroku logs
+
+39)  
+
+
